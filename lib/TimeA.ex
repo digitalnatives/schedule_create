@@ -2,7 +2,7 @@ defmodule TimeA do
   @moduledoc """
   """
 
-  @spec add_to_time(time1, time2) :: time
+  @spec add_to_time(Time.t, Time.t) :: Time.t
   def add_to_time(time1, time2) do
    second   = rem (time1.second + time2.second), 60
    e_second = div (time1.second + time2.second), 60
@@ -13,12 +13,12 @@ defmodule TimeA do
    elapsed_time
   end
 
-  @spec get_bounding_time(start_time, duration) :: time
+  @spec get_bounding_time(Time.t, Time.t) :: Time.t
   def get_bounding_time(start_time, duration) do
     %{start_time: start_time, end_time: add_to_time(start_time, duration)}
   end
 
-  @spec overlap?(time1, time2) :: boolean
+  @spec overlap?(Time.t, Time.t) :: boolean()
   def overlap?(nil, _), do: :false
   def overlap?(_, nil), do: :false
   def overlap?(time1, time2) do
@@ -40,7 +40,7 @@ defmodule TimeA do
     end
   end
 
-  @spec inRange?(time1, time2) :: boolean
+  @spec inRange?(Time.t, Time.t) :: boolean()
   def inRange?(nil, _), do: :false
   def inRange?(_, nil), do: :false
   def inRange?(time1, time2) do

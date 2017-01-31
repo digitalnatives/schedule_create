@@ -4,21 +4,20 @@ defmodule Schedule do
   require TimeA
 
   # an option for general unavailability should be added. like a class named *
-  @config_params
-   [
-    unavailable_classes: [
+  @config_params [
+    unavailable_classes:
+    [
       %{name: "a", time: %{start_time: ~T[12:00:00], end_time: ~T[17:00:00]}}
-      ],
+    ],
     unavailable_times:
     [%{name: "lunch_time",
-       time: %{start_time: ~T[12:00:00],
-       end_time: ~T[13:30:00]}}],
+       time: %{start_time: ~T[12:00:00],end_time: ~T[13:30:00]}}
+    ],
     class_strict_availability:
     [%{name: "b", time: %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}}]
   ]
 
-  @input
-  [
+  @input [
     %{name: "a", duration: ~T[01:00:00]},
     %{name: "b", duration: ~T[01:30:00]},
     %{name: "c", duration: ~T[01:45:00]},
@@ -26,7 +25,7 @@ defmodule Schedule do
   ]
 
   # run with no Configuration. a sample to just practice parsing of the data
-  @spec run(start_time, class_data) :: list
+  @spec run(Time.t, List.t) :: List.t
    def run(start_time, class_data) do
      Enum.map(class_data, fn(class) ->
        start_time
@@ -38,7 +37,7 @@ defmodule Schedule do
      end)
    end
 
-   @spec flatten_tree(redundant_data, output) :: list
+   @spec flatten_tree(List.t, List.t) :: List.t
    def flatten_tree(redundant_data, output) do
      if is_list(redundant_data) && !is_map(List.first(redundant_data)) do
        Enum.reduce(redundant_data, [], fn(item, data) ->
@@ -49,7 +48,7 @@ defmodule Schedule do
      end
    end
 
-   @spec redundant_tree(tree, parent) :: list
+   @spec redundant_tree(List.t, List.t) :: List.t
    def redundant_tree([], parent), do: parent
    def redundant_tree("", parent), do: parent
     def redundant_tree([head | tail], parent) do
@@ -60,14 +59,14 @@ defmodule Schedule do
        end
    end
 
-   @spec remove_nil_options(flattened_list) :: list
+   @spec remove_nil_options(List.t) :: List.t
    def remove_nil_options(flattened_list) do
      Enum.reject(flattened_list, fn(item) ->
                                   Enum.any?(item.options,fn(x) -> is_nil(x) end)
                                  end)
    end
 
-   @spec print_schedule(flattened_tree) :: list
+   @spec print_schedule(List.t) :: List.t
    def print_schedule(flattened_tree) do
      Enum.map(flattened_tree, fn(x) ->
        Enum.map(x.options, fn(option) ->
@@ -77,7 +76,7 @@ defmodule Schedule do
      end)
    end
 
-   @spec add_to_list(current_time, class, remaining_classes, data) :: list
+   @spec add_to_list(Time.t, List.t, List.t, List.t) :: List.t
    def add_to_list(current_time, class, remaining_classes, data) do
      unique_list = List.delete(remaining_classes, class)
      bounding_time =
@@ -106,7 +105,7 @@ defmodule Schedule do
      end
    end
 
-   @spec meet_conditions(class, class_time, config_params) :: list
+   @spec meet_conditions(List.t, Time.t, List.t) :: List.t
    def meet_conditions(class, class_time, config_params) do
      if class_available?(class, class_time, config_params)
         && class_strict?(class, class_time, config_params) do
@@ -117,7 +116,7 @@ defmodule Schedule do
    end
 
    # just finds the first occurance
-   @spec class_strict?(class, class_time, config_params) :: boolean
+   @spec class_strict?(List.t, Time.t, List.t) :: boolean()
    def class_strict?(class, class_time, config_params) do
      matched_class =
        config_params[:class_strict_availability]
@@ -130,7 +129,7 @@ defmodule Schedule do
    end
 
    # just finds the first occurance
-   @spec class_available?(class, class_time, config_params) :: boolean
+   @spec class_available?(List.t, Time.t, List.t) :: boolean()
    def class_available?(class, class_time, config_params) do
      matched_class =
        config_params[:unavailable_classes]
@@ -143,7 +142,7 @@ defmodule Schedule do
    end
 
    #assumes the config param is sorted
-   @spec need_shift_time?(current_time, config_params) :: boolean
+   @spec need_shift_time?(Time.t, List.t) :: boolean()
    def need_shift_time?(current_time, config_params) do
      config_params[:unavailable_times]
        |> Enum.map(fn(item) ->
@@ -151,7 +150,7 @@ defmodule Schedule do
        |> Enum.find(fn(item) -> match?({:true, _}, item)  end)
    end
 
-   @spec get_next_available_time(current_time, class, config_params) :: time
+   @spec get_next_available_time(Time.t, List.t, List.t) :: Time.t
    def get_next_available_time(current_time, class, config_params) do
      case need_shift_time?(current_time, config_params) do
        {:true,  config_time} -> TimeA.get_bounding_time(config_time.end_time,
@@ -160,7 +159,7 @@ defmodule Schedule do
      end
    end
 
-   @spec sort_config_params(config_params) :: list
+   @spec sort_config_params(List.t) :: List.t
    def sort_config_params(config_params) do
     config_params
    end
