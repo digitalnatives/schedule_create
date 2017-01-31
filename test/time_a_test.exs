@@ -81,4 +81,25 @@ defmodule TimeATest do
 
     assert TimeA.overlap?(time1, time2) == :true
   end
+
+  test "check overlap with time1 equal nil" do
+    time1 = nil
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+
+    assert TimeA.overlap?(time1, time2) == :false
+  end
+
+  test "check overlap with time2 equal nil" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = nil
+
+    assert TimeA.overlap?(time1, time2) == :false
+  end
+
+  test "check overlap with time1 and time2 equal nil" do
+    time1 = nil
+    time2 = nil
+
+    assert TimeA.overlap?(time1, time2) == :false
+  end
 end
