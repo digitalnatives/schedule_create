@@ -15,7 +15,8 @@ defmodule TimeA do
    elapsed_time
   end
 
-  @spec get_bounding_time(Time.t, Time.t) :: Time.t
+  @spec get_bounding_time(Time.t, Time.t)
+          :: %{start_time: Time.t, end_time: Time.t}
   def get_bounding_time(nil, _), do: nil
   def get_bounding_time(start_time, nil), do: %{start_time: start_time,
                                                 end_time: start_time}
@@ -23,7 +24,8 @@ defmodule TimeA do
     %{start_time: start_time, end_time: add_to_time(start_time, duration)}
   end
 
-  @spec overlap?(Time.t, Time.t) :: boolean()
+  @spec overlap?(%{start_time: Time.t, end_time: Time.t},
+                 %{start_time: Time.t, end_time: Time.t}) :: boolean()
   def overlap?(nil, _), do: :false
   def overlap?(_, nil), do: :false
   def overlap?(time1, time2) do
@@ -45,7 +47,8 @@ defmodule TimeA do
     end
   end
 
-  @spec inRange?(Time.t, Time.t) :: boolean()
+  @spec inRange?(%{start_time: Time.t, end_time: Time.t},
+                 %{start_time: Time.t, end_time: Time.t}) :: boolean()
   def inRange?(nil, _), do: :false
   def inRange?(_, nil), do: :false
   def inRange?(time1, time2) do
