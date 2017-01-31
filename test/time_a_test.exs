@@ -40,6 +40,7 @@ defmodule TimeATest do
     end
   end
 
+  #tests for of overlap? function
   test "time1 starts earlier but overlap time2" do
      time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
      time2 = %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}
@@ -124,7 +125,7 @@ defmodule TimeATest do
     assert TimeA.inRange?(time1, time2) == :false
   end
 
-#############################
+  #tests for of InRange? function
   test "check if time1 is in range time 2 with time1 starts earlier than time1" do
     time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
     time2 = %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}
@@ -166,7 +167,4 @@ defmodule TimeATest do
 
     assert TimeA.inRange?(time1, time2) == :false
   end
-
-
-
 end
