@@ -167,4 +167,52 @@ defmodule TimeATest do
 
     assert TimeA.inRange?(time1, time2) == :false
   end
+
+  #tests for of get_bounding_time function
+  test "get bounding time with start_time being nil" do
+    time1 = nil
+    time2 = ~T[08:00:00.000000]
+
+    assert TimeA.get_bounding_time(time1, time2) == nil
+  end
+
+  test "get bounding time with duration being nil" do
+    time1 = ~T[08:00:00.000000]
+    time2 = nil
+
+    assert TimeA.get_bounding_time(time1, time2) ==
+      %{start_time: ~T[08:00:00.000000], end_time: ~T[08:00:00.000000]}
+  end
+
+  test "get bounding time with duration being 00:00:00" do
+    time1 = ~T[08:00:00.000000]
+    time2 = ~T[00:00:00.000000]
+
+    assert TimeA.get_bounding_time(time1, time2) ==
+      %{start_time: ~T[08:00:00.000000], end_time: ~T[08:00:00.000000]}
+  end
+
+  test "get bounding time with start_time being 00:00:00" do
+    time1 = ~T[00:00:00.000000]
+    time2 = ~T[01:00:00.000000]
+
+    assert TimeA.get_bounding_time(time1, time2) ==
+      %{start_time: ~T[00:00:00.000000], end_time: ~T[01:00:00.000000]}
+  end
+
+  test "get bounding time with start_time and duration being 00:00:00" do
+    time1 = ~T[00:00:00.000000]
+    time2 = ~T[00:00:00.000000]
+
+    assert TimeA.get_bounding_time(time1, time2) ==
+      %{start_time: ~T[00:00:00.000000], end_time: ~T[00:00:00.000000]}
+  end
+
+  test "get bounding time with of none nil none zero start_time and duration" do
+    time1 = ~T[08:00:00.000000]
+    time2 = ~T[01:30:00.000000]
+
+    assert TimeA.get_bounding_time(time1, time2) ==
+      %{start_time: ~T[08:00:00.000000], end_time: ~T[09:30:00.000000]}
+  end
 end
