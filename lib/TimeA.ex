@@ -17,7 +17,8 @@ defmodule TimeA do
 
   @spec get_bounding_time(Time.t, Time.t) :: Time.t
   def get_bounding_time(nil, _), do: nil
-  def get_bounding_time(start_time, nil), do: start_time
+  def get_bounding_time(start_time, nil), do: %{start_time: start_time,
+                                                end_time: start_time}
   def get_bounding_time(start_time, duration) do
     %{start_time: start_time, end_time: add_to_time(start_time, duration)}
   end
