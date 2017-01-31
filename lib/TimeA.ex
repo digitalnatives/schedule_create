@@ -1,5 +1,6 @@
 defmodule TimeA do
   @moduledoc """
+  This Module provides some functionality to the Elixir Time data type
   """
 
   @spec add_to_time(Time.t, Time.t) :: Time.t
@@ -59,5 +60,4 @@ defmodule TimeA do
       :false
     end
   end
-
 end

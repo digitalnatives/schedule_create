@@ -106,8 +106,15 @@ defmodule Schedule do
    end
 
    @spec meet_conditions(
-         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
-         %{start_time: Time.t, end_time: Time.t}, List.t) :: List.t
+          %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+          %{start_time: Time.t, end_time: Time.t},
+          [unavailable_classes:
+            %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+           unavailable_times:
+            %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+           class_strict_availability:
+            %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}}]
+         ) :: List.t
    def meet_conditions(class, class_time, config_params) do
      if class_available?(class, class_time, config_params)
         && class_strict?(class, class_time, config_params) do
@@ -119,8 +126,15 @@ defmodule Schedule do
 
    # just finds the first occurance
    @spec class_strict?(
-         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
-         %{start_time: Time.t, end_time: Time.t}, List.t) :: boolean()
+           %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+           %{start_time: Time.t, end_time: Time.t},
+           [unavailable_classes:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            unavailable_times:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            class_strict_availability:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}}]
+         ) :: boolean()
    def class_strict?(class, class_time, config_params) do
      matched_class =
        config_params[:class_strict_availability]
@@ -134,8 +148,15 @@ defmodule Schedule do
 
    # just finds the first occurance
    @spec class_available?(
-         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
-         %{start_time: Time.t, end_time: Time.t}, List.t) :: boolean()
+           %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+           %{start_time: Time.t, end_time: Time.t},
+           [unavailable_classes:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            unavailable_times:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            class_strict_availability:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}}]
+         ) :: boolean()
    def class_available?(class, class_time, config_params) do
      matched_class =
        config_params[:unavailable_classes]
@@ -148,8 +169,15 @@ defmodule Schedule do
    end
 
    #assumes the config param is sorted
-   @spec need_shift_time?(%{start_time: Time.t, end_time: Time.t},
-                          List.t) :: boolean()
+   @spec need_shift_time?(
+           %{start_time: Time.t, end_time: Time.t},
+           [unavailable_classes:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            unavailable_times:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            class_strict_availability:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}}]
+         ) :: boolean()
    def need_shift_time?(current_time, config_params) do
      config_params[:unavailable_times]
        |> Enum.map(fn(item) ->
@@ -158,9 +186,15 @@ defmodule Schedule do
    end
 
    @spec get_next_available_time(
-         %{start_time: Time.t, end_time: Time.t},
-         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
-         List.t) :: Time.t
+           %{start_time: Time.t, end_time: Time.t},
+           %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+           [unavailable_classes:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            unavailable_times:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            class_strict_availability:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}}]
+         ) :: Time.t
    def get_next_available_time(current_time, class, config_params) do
      case need_shift_time?(current_time, config_params) do
        {:true,  config_time} -> TimeA.get_bounding_time(config_time.end_time,
@@ -169,7 +203,14 @@ defmodule Schedule do
      end
    end
 
-   @spec sort_config_params(List.t) :: List.t
+   @spec sort_config_params(
+           [unavailable_classes:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            unavailable_times:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+            class_strict_availability:
+             %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}}]
+         ) :: List.t
    def sort_config_params(config_params) do
     config_params
    end
