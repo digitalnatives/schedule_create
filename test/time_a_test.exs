@@ -168,6 +168,13 @@ defmodule TimeATest do
     assert TimeA.inRange?(time1, time2) == :false
   end
 
+  test "return false if time2 is in range of time1" do
+    time1 = %{start_time: ~T[05:00:00], end_time: ~T[12:00:00]}
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
   #tests for of get_bounding_time function
   test "get bounding time with start_time being nil" do
     time1 = nil
