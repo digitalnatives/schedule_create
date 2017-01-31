@@ -102,4 +102,71 @@ defmodule TimeATest do
 
     assert TimeA.overlap?(time1, time2) == :false
   end
+
+  test "check if time1 is in range time 2 with time1 and time2 equal nil" do
+    time1 = nil
+    time2 = nil
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+  test "check if times1 is in range time 2 with time1 equal nil" do
+    time1 = nil
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+  test "check if time1 is in range time 2 with time2 equal nil" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = nil
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+#############################
+  test "check if time1 is in range time 2 with time1 starts earlier than time1" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+  test "check if time1 is in range time2 with time1 finish after time2" do
+    time1 = %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[11:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+  test "check if time1 is in range time2 with time1 equal to time2" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :true
+  end
+
+  test "check if time1 is in range time2 with time1 covers time2" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[12:00:00]}
+    time2 = %{start_time: ~T[09:00:00], end_time: ~T[11:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+  test "check if time1 is in range time2 with time2 covers time1" do
+    time1 = %{start_time: ~T[09:00:00], end_time: ~T[11:00:00]}
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[12:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :true
+  end
+
+  test "check if time1 is in range time2 with time1 not matching with time2 at all" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}
+
+    assert TimeA.inRange?(time1, time2) == :false
+  end
+
+
+
 end
