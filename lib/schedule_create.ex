@@ -24,8 +24,9 @@ defmodule Schedule do
     %{name: "d", duration: ~T[02:00:00]}
   ]
 
-  # run with no Configuration. a sample to just practice parsing of the data
-  @spec run(Time.t, List.t) :: List.t
+  def run, do: run(~T[08:00:00], @input)
+
+  @spec run(Time.t, [%{name: String.t, duration: Time.t}]) :: List.t
    def run(start_time, class_data) do
      Enum.map(class_data, fn(class) ->
        start_time
@@ -76,7 +77,8 @@ defmodule Schedule do
      end)
    end
 
-   @spec add_to_list(Time.t, List.t, List.t, List.t) :: List.t
+   @spec add_to_list(Time.t, %{name: String.t, duration: Time.t},
+                    [%{name: String.t, duration: Time.t}], List.t) :: List.t
    def add_to_list(current_time, class, remaining_classes, data) do
      unique_list = List.delete(remaining_classes, class)
      bounding_time =
@@ -97,15 +99,15 @@ defmodule Schedule do
          output |
          Enum.map(unique_list, fn(u_class) ->
                                  add_to_list(bounding_time.end_time,
-                                             u_class,
-                                             unique_list,
-                                             data)
+                                             u_class, unique_list, data)
                                end)
        ]
      end
    end
 
-   @spec meet_conditions(List.t, Time.t, List.t) :: List.t
+   @spec meet_conditions(
+         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+         %{start_time: Time.t, end_time: Time.t}, List.t) :: List.t
    def meet_conditions(class, class_time, config_params) do
      if class_available?(class, class_time, config_params)
         && class_strict?(class, class_time, config_params) do
@@ -116,7 +118,9 @@ defmodule Schedule do
    end
 
    # just finds the first occurance
-   @spec class_strict?(List.t, Time.t, List.t) :: boolean()
+   @spec class_strict?(
+         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+         %{start_time: Time.t, end_time: Time.t}, List.t) :: boolean()
    def class_strict?(class, class_time, config_params) do
      matched_class =
        config_params[:class_strict_availability]
@@ -129,7 +133,9 @@ defmodule Schedule do
    end
 
    # just finds the first occurance
-   @spec class_available?(List.t, Time.t, List.t) :: boolean()
+   @spec class_available?(
+         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+         %{start_time: Time.t, end_time: Time.t}, List.t) :: boolean()
    def class_available?(class, class_time, config_params) do
      matched_class =
        config_params[:unavailable_classes]
@@ -142,7 +148,8 @@ defmodule Schedule do
    end
 
    #assumes the config param is sorted
-   @spec need_shift_time?(Time.t, List.t) :: boolean()
+   @spec need_shift_time?(%{start_time: Time.t, end_time: Time.t},
+                          List.t) :: boolean()
    def need_shift_time?(current_time, config_params) do
      config_params[:unavailable_times]
        |> Enum.map(fn(item) ->
@@ -150,7 +157,10 @@ defmodule Schedule do
        |> Enum.find(fn(item) -> match?({:true, _}, item)  end)
    end
 
-   @spec get_next_available_time(Time.t, List.t, List.t) :: Time.t
+   @spec get_next_available_time(
+         %{start_time: Time.t, end_time: Time.t},
+         %{name: String.t, time: %{start_time: Time.t, end_time: Time.t}},
+         List.t) :: Time.t
    def get_next_available_time(current_time, class, config_params) do
      case need_shift_time?(current_time, config_params) do
        {:true,  config_time} -> TimeA.get_bounding_time(config_time.end_time,
