@@ -39,4 +39,46 @@ defmodule TimeATest do
        TimeA.add_to_time(~T[23:20:20] , ~T[01:50:50])
     end
   end
+
+  test "time1 starts earlier but overlap time2" do
+     time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+     time2 = %{start_time: ~T[09:00:00], end_time: ~T[12:00:00]}
+
+     assert TimeA.overlap?(time1, time2) == :true
+  end
+
+  test "time1 is completely covered by time2 and hence overlap" do
+    time1 = %{start_time: ~T[09:00:00], end_time: ~T[10:00:00]}
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[12:00:00]}
+
+    assert TimeA.overlap?(time1, time2) == :true
+  end
+
+  test "time2 is completely covered by time1 and hence overlap" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[12:00:00]}
+    time2 = %{start_time: ~T[09:00:00], end_time: ~T[11:00:00]}
+
+    assert TimeA.overlap?(time1, time2) == :true
+  end
+
+  test "time1 starts in middle of time2 and finish later, hence overlap" do
+    time1 = %{start_time: ~T[10:00:00], end_time: ~T[12:00:00]}
+    time2 = %{start_time: ~T[09:00:00], end_time: ~T[11:00:00]}
+
+    assert TimeA.overlap?(time1, time2) == :true
+  end
+
+  test "time1 does not overlap time2" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = %{start_time: ~T[11:00:00], end_time: ~T[12:00:00]}
+
+    assert TimeA.overlap?(time1, time2) == :false
+  end
+
+  test "time1 is exact equal time2, hence overlap" do
+    time1 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+    time2 = %{start_time: ~T[08:00:00], end_time: ~T[10:00:00]}
+
+    assert TimeA.overlap?(time1, time2) == :true
+  end
 end
